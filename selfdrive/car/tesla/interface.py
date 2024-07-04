@@ -19,13 +19,8 @@ class CarInterface(CarInterfaceBase):
 
     ret.steerControlType = car.CarParams.SteerControlType.angle
 
-    # Set kP and kI to 0 over the whole speed range to have the planner accel as actuator command
-    ret.longitudinalTuning.kpBP = [0]
-    ret.longitudinalTuning.kpV = [0]
-    ret.longitudinalTuning.kiBP = [0]
-    ret.longitudinalTuning.kiV = [0]
-    ret.longitudinalActuatorDelayUpperBound = 0.5 # s
-    ret.radarTimeStep = (1.0 / 8) # 8Hz
+    ret.longitudinalActuatorDelay = 0.5 # s
+    ret.radarUnavailable = True
 
     params = Params()
     stock_acc = params.get_bool("StockTaccEnabledToggle")
@@ -40,12 +35,9 @@ class CarInterface(CarInterfaceBase):
     ret.steerActuatorDelay = 0.25
     return ret
 
-  def _update(self, c, frogpilot_variables):
-    ret, fp_ret = self.CS.update(self.cp, self.cp_cam, self.cp_adas, frogpilot_variables)
+  def _update(self, c, frogpilot_toggles):
+    ret, fp_ret = self.CS.update(self.cp, self.cp_cam, self.cp_adas, frogpilot_toggles)
 
     ret.events = self.create_common_events(ret).to_msg()
 
     return ret, fp_ret
-
-  def apply(self, c, now_nanos, frogpilot_variables):
-    return self.CC.update(c, self.CS, now_nanos, frogpilot_variables)

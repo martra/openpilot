@@ -20,7 +20,7 @@ class CarState(CarStateBase):
     self.das_control = None
     self.steering_override = False  # Set in CC because actuator info is needed to determine this.
 
-  def update(self, cp, cp_cam, cp_adas, frogpilot_variables):
+  def update(self, cp, cp_cam, cp_adas, frogpilot_toggles):
     ret = car.CarState.new_message()
     fp_ret = custom.FrogPilotCarState.new_message()
 
