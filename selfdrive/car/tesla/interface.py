@@ -36,7 +36,7 @@ class CarInterface(CarInterfaceBase):
     return ret
 
   def _update(self, c, frogpilot_toggles):
-    ret, fp_ret = self.CS.update(self.cp, self.cp_cam, self.cp_adas, frogpilot_toggles)
+    ret, fp_ret = self.CS.update(self.cp, self.cp_cam, frogpilot_toggles)
 
     ret.events = self.create_common_events(ret).to_msg()
 

@@ -22,7 +22,6 @@ const int TESLA_FLAG_LONGITUDINAL_CONTROL = 2;
 const CanMsg TESLA_M3_Y_TX_MSGS[] = {
   {0x488, 0, 4},  // DAS_steeringControl
   {0x2b9, 0, 8},  // DAS_control
-  {0x229, 1, 3},  // SCCM_rightStalk
 };
 
 RxCheck tesla_model3_y_rx_checks[] = {
@@ -33,7 +32,6 @@ RxCheck tesla_model3_y_rx_checks[] = {
   {.msg = {{0x39d, 0, 5, .frequency = 25U}, { 0 }, { 0 }}},   // IBST_status (brakes)
   {.msg = {{0x286, 0, 8, .frequency = 10U}, { 0 }, { 0 }}},   // DI_state (acc state)
   {.msg = {{0x311, 0, 7, .frequency = 10U}, { 0 }, { 0 }}},   // UI_warning (buckle switch & doors)
-  {.msg = {{0x3f5, 1, 8, .frequency = 10U}, { 0 }, { 0 }}},   // ID3F5VCFRONT_lighting (blinkers)
 };
 
 bool tesla_longitudinal = false;
@@ -112,16 +110,8 @@ static bool tesla_tx_hook(const CANPacket_t *to_send) {
     }
   }
 
-
-  if (addr == 0x229){
-    // Only the "Half up" and "Neutral" positions are permitted for sending stalk signals.
-    int control_lever_status = ((GET_BYTE(to_send, 1) & 0x70U) >> 4);
-    if ((control_lever_status > 1)) {
-      violation = true;
-    }
-  }
-
   if(addr == 0x2b9) {
+    int acc_state = ((GET_BYTE(to_send, 1) & 0xF0U) >> 4);
     // DAS_control: longitudinal control message
     if (tesla_longitudinal) {
       // No AEB events may be sent by openpilot
@@ -140,6 +130,14 @@ static bool tesla_tx_hook(const CANPacket_t *to_send) {
       int raw_accel_min = ((GET_BYTE(to_send, 5) & 0x0FU) << 5) | (GET_BYTE(to_send, 4) >> 3);
       violation |= longitudinal_accel_checks(raw_accel_max, TESLA_LONG_LIMITS);
       violation |= longitudinal_accel_checks(raw_accel_min, TESLA_LONG_LIMITS);
+
+      // Prevent both acceleration from being negative, as this could cause the car to reverse after coming to standstill
+      if ((raw_accel_max < TESLA_LONG_LIMITS.inactive_accel) && (raw_accel_min < TESLA_LONG_LIMITS.inactive_accel)){
+        violation = true;
+      }
+
+    } else if(!tesla_longitudinal && acc_state == 13) {
+      // Allow to cancel if not using openpilot longitudinal
     } else {
       violation = true;
     }

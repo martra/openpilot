@@ -30,8 +30,7 @@ class CarController(CarControllerBase):
     self.apply_angle_last = 0
     self.last_hands_nanos = 0
     self.packer = CANPacker(dbc_name)
-    self.pt_packer = CANPacker(DBC[CP.carFingerprint]['pt'])
-    self.tesla_can = TeslaCAN(self.packer, self.pt_packer)
+    self.tesla_can = TeslaCAN(self.packer)
     self.virtual_blending = Params().get_bool("VirtualTorqueBlending")
 
   def update(self, CC, CS, now_nanos, frogpilot_toggles):
@@ -78,27 +77,22 @@ class CarController(CarControllerBase):
       self.apply_angle_last = apply_angle
       can_sends.append(self.tesla_can.create_steering_control(apply_angle, lkas_enabled, (self.frame // 2) % 16))
 
-    # Longitudinal control (in sync with stock message, about 40Hz)
-    if self.CP.openpilotLongitudinalControl:
-      acc_state = CS.das_control["DAS_accState"]
-      target_accel = actuators.accel
-      target_speed = max(CS.out.vEgo + (target_accel * CarControllerParams.ACCEL_TO_SPEED_MULTIPLIER), 0)
-      max_accel = 0 if target_accel < 0 else target_accel
-      min_accel = 0 if target_accel > 0 else target_accel
-
-      counter = CS.das_control["DAS_controlCounter"]
-      can_sends.append(self.tesla_can.create_longitudinal_commands(acc_state, target_speed, min_accel, max_accel, counter))
-
     if not self.virtual_blending:
       # Cancel on user steering override when blending is disabled
       if CS.steering_override:
         pcm_cancel_cmd = True
 
-    # Sent cancel request only if ACC is enabled
-    if self.frame % 10 == 0 and pcm_cancel_cmd and CS.acc_enabled:
-      counter = int(CS.sccm_right_stalk_counter)
-      can_sends.append(self.tesla_can.right_stalk_press((counter + 1) % 16 , 1))  # half up (cancel acc)
-      can_sends.append(self.tesla_can.right_stalk_press((counter + 2) % 16, 0))  # to prevent neutral gear warning
+    # Longitudinal control
+    if self.CP.openpilotLongitudinalControl:
+      state = 4 if not pcm_cancel_cmd else 13  # 4=ACC_ON, 13=ACC_CANCEL_GENERIC_SILENT
+      accel = clip(actuators.accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
+      cntr = CS.das_control["DAS_controlCounter"]
+      can_sends.append(self.tesla_can.create_longitudinal_command(state, accel, cntr, CC.longActive))
+
+    # Increment counter so cancel is prioritized even without openpilot longitudinal
+    if pcm_cancel_cmd and not self.CP.openpilotLongitudinalControl:
+      cntr = (CS.das_control["DAS_controlCounter"] + 1) % 8
+      can_sends.append(self.tesla_can.create_longitudinal_command(13, 0,  cntr, False))
 
     # TODO: HUD control
 
