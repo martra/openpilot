@@ -31,7 +31,7 @@ class CarController(CarControllerBase):
     self.last_hands_nanos = 0
     self.packer = CANPacker(dbc_name)
     self.tesla_can = TeslaCAN(self.packer)
-    self.virtual_blending = False
+    self.virtual_blending = True
 
   def update(self, CC, CS, now_nanos, frogpilot_toggles):
     actuators = CC.actuators
