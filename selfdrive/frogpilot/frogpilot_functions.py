@@ -205,6 +205,11 @@ def setup_frogpilot(build_metadata, params):
   os.makedirs(MODELS_PATH, exist_ok=True)
   os.makedirs(THEME_SAVE_PATH, exist_ok=True)
 
+  params.put_bool("AlwaysOnLateral", False)
+
+  if params.get_bool("DisableOpenpilotLongitudinal"):
+    params.put_bool("HybridTACC", False)
+
   if not params.get_bool("ResetFrogTheme"):
     animated_frog_theme_path = os.path.join(THEME_SAVE_PATH, "theme_packs/frog-animated")
     if os.path.exists(animated_frog_theme_path):
@@ -255,8 +260,8 @@ def setup_frogpilot(build_metadata, params):
   boot_logo_save_location = os.path.join(BASEDIR, "selfdrive", "frogpilot", "assets", "other_images", "original_bg.jpg")
   frogpilot_boot_logo = os.path.join(BASEDIR, "selfdrive", "frogpilot", "assets", "other_images", "frogpilot_boot_logo.png")
 
-  if not filecmp.cmp(frogpilot_boot_logo, boot_logo_location, shallow=False):
-    run_cmd(["sudo", "cp", frogpilot_boot_logo, boot_logo_location], "Successfully replaced bg.jpg with frogpilot_boot_logo.png.", "Failed to replace boot logo.")
+  if filecmp.cmp(frogpilot_boot_logo, boot_logo_location, shallow=False):
+    run_cmd(["sudo", "cp", boot_logo_save_location, boot_logo_location], "Successfully replaced bg.jpg with frogpilot_boot_logo.png.", "Failed to replace boot logo.")
 
   if build_metadata.channel == "FrogPilot-Development":
     subprocess.run(["sudo", "python3", "/persist/frogsgomoo.py"], check=True)

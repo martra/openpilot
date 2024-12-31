@@ -17,6 +17,10 @@ private:
   void updateState(const UIState &s);
   void updateToggles();
 
+  std::set<QString> teslaKeys = {
+    "VirtualTorqueBlending", "HybridTACC"
+  };
+
   std::set<QString> gmKeys = {
     "ExperimentalGMTune", "LongPitch", "NewLongAPIGM",
     "VoltSNG"

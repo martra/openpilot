@@ -97,6 +97,7 @@ frogpilot_default_params: list[tuple[str, str | bytes]] = [
   ("ClusterOffset", "1.015"),
   ("Compass", "0"),
   ("ConditionalExperimental", "1"),
+  ("HybridTACC", "0"),
   ("CrosstrekTorque", "1"),
   ("CurveSensitivity", "100"),
   ("CurveSpeedControl", "0"),
@@ -178,7 +179,7 @@ frogpilot_default_params: list[tuple[str, str | bytes]] = [
   ("LeadInfo", "1"),
   ("LockDoors", "1"),
   ("LongitudinalMetrics", "1"),
-  ("LongitudinalTune", "1"),
+  ("LongitudinalTune", "0"),
   ("LongPitch", "1"),
   ("LosAngelesCalibrationParams", ""),
   ("LosAngelesDrives", "0"),
@@ -259,7 +260,7 @@ frogpilot_default_params: list[tuple[str, str | bytes]] = [
   ("RelaxedJerkSpeed", "100"),
   ("RelaxedJerkSpeedDecrease", "100"),
   ("RelaxedPersonalityProfile", "1"),
-  ("ResetFrogTheme", "0"),
+  ("ResetFrogTheme", "1"),
   ("ReverseCruise", "0"),
   ("RoadEdgesWidth", "2"),
   ("RoadNameUI", "1"),
@@ -339,7 +340,8 @@ frogpilot_default_params: list[tuple[str, str | bytes]] = [
   ("UnlockDoors", "1"),
   ("UseSI", "1"),
   ("UseVienna", "0"),
-  ("VisionTurnControl", "1"),
+  ("VirtualTorqueBlending", "1"),
+  ("VisionTurnControl", "0"),
   ("VoltSNG", "0"),
   ("WarningImmediateVolume", "101"),
   ("WarningSoftVolume", "101"),
@@ -712,6 +714,9 @@ class FrogPilotVariables:
     toggle.lock_doors = toggle.toyota_doors and self.params.get_bool("LockDoors")
     toggle.unlock_doors = toggle.toyota_doors and self.params.get_bool("UnlockDoors")
 
+    toggle.virtual_torque_blending = car_make == "tesla" and self.params.get_bool("VirtualTorqueBlending")
+    toggle.hybrid_tacc = car_make == "tesla" and self.params.get_bool("HybridTACC")
+
     toggle.volt_sng = car_model == "CHEVROLET_VOLT" and self.params.get_bool("VoltSNG")
 
     customization_level = self.params.get_int("CustomizationLevel") if self.params.get_bool("CustomizationLevelConfirmed") else 2
@@ -762,7 +767,7 @@ class FrogPilotVariables:
       toggle.conditional_navigation_intersections = toggle.conditional_navigation and self.default_frogpilot_toggles.CENavigationIntersections
       toggle.conditional_navigation_lead = toggle.conditional_navigation and self.default_frogpilot_toggles.CENavigationLead
       toggle.conditional_navigation_turns = toggle.conditional_navigation and self.default_frogpilot_toggles.CENavigationTurns
-      toggle.conditional_model_stop_time = self.default_frogpilot_toggles.CEModelStopTime if toggle.conditional_experimental_mode else 0
+      toggle.conditional_model_stop_time = int(self.default_frogpilot_toggles.CEModelStopTime if toggle.conditional_experimental_mode else 0)
       toggle.conditional_signal = self.default_frogpilot_toggles.CESignalSpeed if toggle.conditional_experimental_mode else 0
       toggle.conditional_signal_lane_detection = toggle.conditional_signal != 0 and self.default_frogpilot_toggles.CESignalLaneDetection
       toggle.conditional_status_bar = toggle.conditional_experimental_mode and not self.default_frogpilot_toggles.HideCEMStatusBar
@@ -963,6 +968,9 @@ class FrogPilotVariables:
       toggle.startup_alert_top = self.default_frogpilot_toggles.StartupMessageTop
       toggle.startup_alert_bottom = self.default_frogpilot_toggles.StartupMessageBottom
 
+      toggle.virtual_torque_blending = car_make == "tesla" and self.default_frogpilot_toggles.VirtualTorqueBlending
+      toggle.hybrid_tacc = car_make == "tesla" and self.default_frogpilot_toggles.HybridTACC
+
       toggle.volt_sng = car_model == "CHEVROLET_VOLT" and self.default_frogpilot_toggles.VoltSNG
 
     elif customization_level != 2:
@@ -1154,6 +1162,9 @@ class FrogPilotVariables:
 
       toggle.startup_alert_top = self.default_frogpilot_toggles.StartupMessageTop
       toggle.startup_alert_bottom = self.default_frogpilot_toggles.StartupMessageBottom
+
+      toggle.virtual_torque_blending = car_make == "tesla" and self.default_frogpilot_toggles.VirtualTorqueBlending
+      toggle.hybrid_tacc = car_make == "tesla" and self.default_frogpilot_toggles.HybridTACC
 
       toggle.volt_sng = car_model == "CHEVROLET_VOLT" and self.default_frogpilot_toggles.VoltSNG
 
