@@ -10,7 +10,7 @@ from openpilot.common.realtime import Ratekeeper
 
 from openpilot.selfdrive.frogpilot.frogpilot_utilities import is_url_pingable
 
-VERSION = 'v1'
+VERSION = 'v2'
 
 GITHUB_VERSION_URL = f"https://github.com/FrogAi/FrogPilot-Resources/raw/Versions/mapd_version_{VERSION}.json"
 GITLAB_VERSION_URL = f"https://gitlab.com/FrogAi/FrogPilot-Resources/-/raw/Versions/mapd_version_{VERSION}.json"
