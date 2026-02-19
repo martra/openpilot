@@ -19,7 +19,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerControlType = car.CarParams.SteerControlType.angle
 
     ret.longitudinalTuning.kpBP = [0., 10., 20.]
-    ret.longitudinalTuning.kpV = [0.4, 0.35, 0.3]
+    ret.longitudinalTuning.kpV = [0.35, 0.3, 0.25]
     ret.longitudinalTuning.kiBP = [0., 10., 20.]
     ret.longitudinalTuning.kiV = [0.06, 0.05, 0.04]
 
