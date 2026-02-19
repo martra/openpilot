@@ -43,7 +43,7 @@ LEAD_DANGER_FACTOR = 0.75
 LIMIT_COST = 1e6
 ACADOS_SOLVER_TYPE = 'SQP_RTI'
 # Default lead acceleration decay set to 50% at 1s
-LEAD_ACCEL_TAU = 1.5
+LEAD_ACCEL_TAU = 1.0
 
 
 # Fewer timestamps don't hurt performance and lead to
