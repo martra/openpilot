@@ -26,6 +26,9 @@ class CarInterface(CarInterfaceBase):
     ret.longitudinalActuatorDelay = 0.15 # s
     ret.radarUnavailable = True
 
+    ret.startAccel = 1.0
+    ret.vEgoStarting = 0.1
+
     if candidate in [CAR.TESLA_AP3_MODEL3, CAR.TESLA_AP3_MODELY]:
       flags = Panda.FLAG_TESLA_MODEL3_Y
 
