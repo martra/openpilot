@@ -25,6 +25,7 @@ class CarInterface(CarInterfaceBase):
 
     ret.longitudinalActuatorDelay = 0.15 # s
     ret.radarUnavailable = True
+    ret.startingState = True
 
     ret.startAccel = 1.0
     ret.vEgoStarting = 0.2
