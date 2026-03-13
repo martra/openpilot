@@ -28,7 +28,7 @@ class CarInterface(CarInterfaceBase):
     ret.startingState = True
 
     ret.startAccel = 1.0
-    ret.vEgoStarting = 0.2
+    ret.vEgoStarting = 0.5
 
     if candidate in [CAR.TESLA_AP3_MODEL3, CAR.TESLA_AP3_MODELY]:
       flags = Panda.FLAG_TESLA_MODEL3_Y
