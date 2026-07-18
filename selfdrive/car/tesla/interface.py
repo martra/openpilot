@@ -21,7 +21,7 @@ class CarInterface(CarInterfaceBase):
     ret.longitudinalTuning.kpBP = [0., 5., 20.]
     ret.longitudinalTuning.kpV = [0.24, 0.16, 0.16]
     ret.longitudinalTuning.kiBP = [0., 5., 20.]
-    ret.longitudinalTuning.kiV = [0.30, 0.28, 0.26]
+    ret.longitudinalTuning.kiV = [0.15, 0.14, 0.12]
 
     ret.longitudinalActuatorDelay = 0.15 # s
     ret.radarUnavailable = True
