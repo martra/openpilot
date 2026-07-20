@@ -19,9 +19,9 @@ class CarInterface(CarInterfaceBase):
     ret.steerControlType = car.CarParams.SteerControlType.angle
 
     ret.longitudinalTuning.kpBP = [0., 5., 20.]
-    ret.longitudinalTuning.kpV = [0.20, 0.12, 0.10]
+    ret.longitudinalTuning.kpV = [0.16, 0.10, 0.08]
     ret.longitudinalTuning.kiBP = [0., 5., 20.]
-    ret.longitudinalTuning.kiV = [0.08, 0.06, 0.04]
+    ret.longitudinalTuning.kiV = [0.05, 0.03, 0.02]
 
     ret.longitudinalActuatorDelay = 0.15 # s
     ret.radarUnavailable = True
